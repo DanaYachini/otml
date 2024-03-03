@@ -18,10 +18,10 @@ configurations_tuples = [
             "remove_feature_bundle_phonotactic_constraint": 0,
             "augment_feature_bundle": 0}),
     ("CONSTRAINT_INSERTION_WEIGHTS", {
-            "Dep": 1,
-            "Max": 1,
+            "Dep": 0,
+            "Max": 0,
             "Ident": 0,
-            "Phonotactic": 1}),
+            "Phonotactic": 0}),
     ("LEXICON_MUTATION_WEIGHTS", {
             "insert_segment": 1,
             "delete_segment": 1,

@@ -36,7 +36,7 @@
     "remove_feature_bundle_phonotactic_constraint": 1,
     "augment_feature_bundle": 0},
     "CONSTRAINT_INSERTION_WEIGHTS": {
-    "Dep": 0,
+    "Dep": 1,
     "Max": 1,
     "Ident": 0,
     "Phonotactic": 1},

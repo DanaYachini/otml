@@ -10,7 +10,7 @@ current_file_path = Path(__file__)
 source_directory_path = current_file_path.parent
 fixtures_directory_path = Path(source_directory_path, "tests", "fixtures")
 
-configuration_file_path = str(Path(fixtures_directory_path, "configuration", "otml_configuration.json"))
+configuration_file_path = str(Path(fixtures_directory_path, "configuration", "bb_demote_only_configuration.json"))
 
 configuration_json_str = codecs.open(configuration_file_path, 'r').read()
 OtmlConfigurationManager(configuration_json_str)
@@ -32,7 +32,7 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 file_log_formatter = logging.Formatter('%(asctime)s %(levelname)s %(name)s %(message)s', "%Y-%m-%d %H:%M:%S")
-file_log_handler = logging.FileHandler("my.log", mode='w')
+file_log_handler = logging.FileHandler(log_file_path, mode='w')
 file_log_handler.setFormatter(file_log_formatter)
 logger.addHandler(file_log_handler)
 
@@ -42,13 +42,24 @@ console_handler.setFormatter(file_log_formatter)
 logger.addHandler(console_handler)
 
 
-feature_table_file_stem = "a_b_and_cons_feature_table"
-corpus_file_stem = "very_small_ab_target_corpus"
-constraint_set_file_stem = "bb_target_constraint_set"
+feature_table_file_name = "a_b_and_cons_feature_table.json"
 
-feature_table_file_path = str(Path(fixtures_directory_path, "feature_table", f"{feature_table_file_stem}.json"))
-corpus_file_path = str(Path(fixtures_directory_path, "corpora", f"{corpus_file_stem}.txt"))
-constraint_set_file_path = str(Path(fixtures_directory_path, "constraint_sets", f"{constraint_set_file_stem}.json"))
+# corpus_file_name = "bb_corpus.txt"
+# constraint_set_file_name = "faith_constraint_set.json"
+
+
+# 9230
+
+# 412,430
+
+corpus_file_name = "bb_target_lexicon.txt"
+constraint_set_file_name = "bb_target_constraint_set.json"
+#
+# # 411,582
+
+feature_table_file_path = str(Path(fixtures_directory_path, "feature_table", feature_table_file_name))
+corpus_file_path = str(Path(fixtures_directory_path, "corpora", corpus_file_name))
+constraint_set_file_path = str(Path(fixtures_directory_path, "constraint_sets", constraint_set_file_name))
 
 
 configuration_json_str = codecs.open(configuration_file_path, 'r').read()
@@ -59,11 +70,17 @@ corpus = Corpus.load(corpus_file_path)
 constraint_set = ConstraintSet.load(constraint_set_file_path, feature_table)
 lexicon = Lexicon(corpus.get_words(), feature_table)
 grammar = Grammar(feature_table, constraint_set, lexicon)
+#print(grammar.get_encoding_length())
+
+
+
+#print(grammar.get_all_outputs_grammar())
+
 #data = corpus.get_words()
+data = grammar.get_all_outputs_grammar()
+traversable_hypothesis = TraversableGrammarHypothesis(grammar, data)
 
-print(grammar.get_all_outputs_grammar())
+print(traversable_hypothesis.get_energy())
 
-
-# traversable_hypothesis = TraversableGrammarHypothesis(grammar, data)
 # simulated_annealing = SimulatedAnnealing(traversable_hypothesis)
 # simulated_annealing.run()
