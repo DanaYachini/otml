@@ -7,7 +7,8 @@ dot_files_folder_path = os.path.join(dirname, "logging/dot_files")
 
 
 def write_to_dot(transducer, file_name):
-            open(os.path.join(dot_files_folder_path, file_name+".dot"), "w").write(transducer.dot_representation())
+    pass
+    #open(os.path.join(dot_files_folder_path, file_name+".dot"), "w").write(transducer.dot_representation())
 
 run_times_by_function_names = defaultdict(list)
 
