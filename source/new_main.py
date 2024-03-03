@@ -1,8 +1,16 @@
 import codecs
+from logging import StreamHandler
+
+import logging
 from otml_configuration_manager import OtmlConfigurationManager
+from pathlib import Path
 
 
-configuration_file_path = "/Users/iddoberger/Documents/MercurialRepositories/otml/source/tests/fixtures/configuration/otml_configuration.json"
+current_file_path = Path(__file__)
+source_directory_path = current_file_path.parent
+fixtures_directory_path = Path(source_directory_path, "tests", "fixtures")
+
+configuration_file_path = str(Path(fixtures_directory_path, "configuration", "otml_configuration.json"))
 
 configuration_json_str = codecs.open(configuration_file_path, 'r').read()
 OtmlConfigurationManager(configuration_json_str)
@@ -15,14 +23,29 @@ from traversable_grammar_hypothesis import TraversableGrammarHypothesis
 from corpus import Corpus
 from simulated_annealing import SimulatedAnnealing
 
+logging_directory_path = Path(source_directory_path, "logging")
+
+log_file_path = str(Path(logging_directory_path, "ab.txt"))
+
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+file_log_formatter = logging.Formatter('%(asctime)s %(levelname)s %(name)s %(message)s', "%Y-%m-%d %H:%M:%S")
+file_log_handler = logging.FileHandler("my.log", mode='w')
+file_log_handler.setFormatter(file_log_formatter)
+logger.addHandler(file_log_handler)
+
+console_handler = StreamHandler()
+console_handler.setLevel(logging.INFO)
+console_handler.setFormatter(file_log_formatter)
+logger.addHandler(console_handler)
 
 
 
-
-
-feature_table_file_path = "/Users/iddoberger/Documents/MercurialRepositories/otml/source/tests/fixtures/feature_table/french_deletion_feature_table.json"
-corpus_file_path = "/Users/iddoberger/Documents/MercurialRepositories/otml/source/tests/fixtures/corpora/french_deletion_corpus.txt"
-constraint_set_file_path = "/Users/iddoberger/Documents/MercurialRepositories/otml/source/tests/fixtures/constraint_sets/french_deletion_constraint_set.json"
+feature_table_file_path = str(Path(fixtures_directory_path, "feature_table", "a_b_and_son_feature_table.json"))
+corpus_file_path = str(Path(fixtures_directory_path, "corpora", "bb_corpus.txt"))
+constraint_set_file_path = str(Path(fixtures_directory_path, "constraint_sets", "faith_constraint_set.json"))
 
 
 configuration_json_str = codecs.open(configuration_file_path, 'r').read()
