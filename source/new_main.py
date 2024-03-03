@@ -42,9 +42,9 @@ console_handler.setFormatter(file_log_formatter)
 logger.addHandler(console_handler)
 
 
-feature_table_file_stem = "a_b_and_son_feature_table"
-corpus_file_stem = "small_ab_target_corpus"
-constraint_set_file_stem = "faith_constraint_set"
+feature_table_file_stem = "a_b_and_cons_feature_table"
+corpus_file_stem = "very_small_ab_target_corpus"
+constraint_set_file_stem = "bb_target_constraint_set"
 
 feature_table_file_path = str(Path(fixtures_directory_path, "feature_table", f"{feature_table_file_stem}.json"))
 corpus_file_path = str(Path(fixtures_directory_path, "corpora", f"{corpus_file_stem}.txt"))
@@ -63,7 +63,6 @@ grammar = Grammar(feature_table, constraint_set, lexicon)
 
 print(grammar.get_all_outputs_grammar())
 
-print(data)
 
 # traversable_hypothesis = TraversableGrammarHypothesis(grammar, data)
 # simulated_annealing = SimulatedAnnealing(traversable_hypothesis)
