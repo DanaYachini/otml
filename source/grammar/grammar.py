@@ -1,18 +1,11 @@
-#Python2 and Python 3 compatibility:
-from __future__ import absolute_import, division, print_function, unicode_literals
-
-from six import iterkeys
 import logging
-
 from random import choice
 from grammar.lexicon import Word
 from transducer import Transducer
 from transducers_optimization_tools import optimize_transducer_grammar_for_word, make_optimal_paths
-from unicode_mixin import UnicodeMixin
 from randomization_tools import get_weighted_list
 from otml_configuration_manager import OtmlConfigurationManager, OtmlConfigurationError
-from debug_tools import write_to_dot, timeit
-
+from debug_tools import write_to_dot
 
 
 logger = logging.getLogger(__name__)
@@ -26,12 +19,11 @@ outputs_by_constraint_set_and_word = dict()
 grammar_transducers = dict()
 
 
-
 class GrammarParseError(Exception):
     pass
 
 
-class Grammar(UnicodeMixin, object):
+class Grammar:
     """This class represents an Optimality Theory grammar."""
     def __init__(self, feature_table, constraint_set, lexicon):
         self.feature_table = feature_table
@@ -51,13 +43,13 @@ class Grammar(UnicodeMixin, object):
         return mutation_result
 
     def get_transducer(self):
-            constraint_set_key = str(self.constraint_set) # constraint_set is the identifier of the grammar transducer
-            if constraint_set_key in grammar_transducers:
-                return grammar_transducers[constraint_set_key]
-            else:
-                transducer = self._make_transducer()
-                grammar_transducers[constraint_set_key] = transducer
-                return transducer
+        constraint_set_key = str(self.constraint_set)  # constraint_set is the identifier of the grammar transducer
+        if constraint_set_key in grammar_transducers:
+            return grammar_transducers[constraint_set_key]
+        else:
+            transducer = self._make_transducer()
+            grammar_transducers[constraint_set_key] = transducer
+            return transducer
 
     def _make_transducer(self):
         constraint_set_transducer = self.constraint_set.get_transducer()
@@ -82,7 +74,6 @@ class Grammar(UnicodeMixin, object):
             outputs_by_constraint_set_and_word[constraint_set_and_word_key] = outputs
             return outputs
 
-
     def _get_outputs(self, word):
         grammar_transducer = self.get_transducer()
         word_transducer = word.get_transducer()
@@ -95,7 +86,6 @@ class Grammar(UnicodeMixin, object):
         intersected_transducer = optimize_transducer_grammar_for_word(word, intersected_transducer)
         outputs = intersected_transducer.get_range()
         return outputs
-
 
     def get_all_outputs_grammar(self, new_string_word_list=[]):
         """
@@ -112,8 +102,7 @@ class Grammar(UnicodeMixin, object):
 
         return outputs
 
-
-    def __unicode__(self):
+    def __str__(self):
         return "Grammar with [{0}]; and [{1}]".format(self.constraint_set, self.lexicon)
 
     def __hash__(self):

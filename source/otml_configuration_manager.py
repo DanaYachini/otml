@@ -6,12 +6,11 @@ from copy import deepcopy
 
 from six import StringIO
 
-from unicode_mixin import UnicodeMixin
 
 class OtmlConfigurationError(Exception):
     pass
 
-class OtmlConfigurationManager(ConfigurationManager, UnicodeMixin):
+class OtmlConfigurationManager(ConfigurationManager):
     def __init__(self, json_str):
         ConfigurationManager.__init__(self, json_str, mapping_function=OtmlConfigurationManager.mapping_function)
         self.initial_configurations_dict = deepcopy(self.configurations)
@@ -51,10 +50,10 @@ class OtmlConfigurationManager(ConfigurationManager, UnicodeMixin):
                                          self.configurations["CONSTRAINT_SET_MUTATION_WEIGHTS"])
         _check_weights_total_is_not_zero(self.configurations["CONSTRAINT_INSERTION_WEIGHTS"])
 
-        if self.configurations["CONSTRAINT_SET_MUTATION_WEIGHTS"]["augment_feature_bundle"] is 1:
+        if self.configurations["CONSTRAINT_SET_MUTATION_WEIGHTS"]["augment_feature_bundle"] == 1:
             raise NotImplementedError
 
-        if self.configurations["LEXICON_MUTATION_WEIGHTS"]["change_segment"] is 1:
+        if self.configurations["LEXICON_MUTATION_WEIGHTS"]["change_segment"] == 1:
             raise NotImplementedError
 
         if self.configurations["ALLOW_CANDIDATES_WITH_CHANGED_SEGMENTS"] is True:
@@ -90,7 +89,7 @@ class OtmlConfigurationManager(ConfigurationManager, UnicodeMixin):
         self.derived_configurations["IDENT_WEIGHT_FOR_INSERT"] = constraint_insertion_weights['Ident']
         self.derived_configurations["PHONOTACTIC_WEIGHT_FOR_INSERT"] = constraint_insertion_weights['Phonotactic']
 
-    def __unicode__(self):
+    def __str__(self):
         values_str_io = StringIO()
         print("Otml configuration manager with:", end="\n", file=values_str_io)
         for (key, value) in sorted(self.configurations.items()):

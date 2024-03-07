@@ -1,9 +1,4 @@
-#Python2 and Python 3 compatibility:
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import textwrap
-
-from unicode_mixin import UnicodeMixin
 from grammar.lexicon import Word, get_words_from_file
 from otml_configuration_manager import OtmlConfigurationManager, OtmlConfigurationError
 
@@ -11,7 +6,8 @@ configurations = OtmlConfigurationManager.get_instance()
 if configurations is None:
     raise OtmlConfigurationError("OtmlConfigurationManager was not initialized")
 
-class Corpus(UnicodeMixin, object):
+
+class Corpus:
 
     def __init__(self, string_words):
         self.words = string_words
@@ -30,8 +26,7 @@ class Corpus(UnicodeMixin, object):
 
         return cls(words_after_duplication)
 
-
-    def __unicode__(self):
+    def __str__(self):
         return "Corpus with {0} words".format(len(self))
 
     def __getitem__(self, item):

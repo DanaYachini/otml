@@ -1,16 +1,10 @@
-#Python2 and Python 3 compatibility:
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import codecs
 import json
 from random import choice
 import logging
 from copy import deepcopy
 import os
-
 from six import string_types, integer_types, StringIO, iterkeys
-
-from unicode_mixin import UnicodeMixin
 from otml_configuration_manager import OtmlConfigurationManager, OtmlConfigurationError
 
 
@@ -19,11 +13,12 @@ configurations = OtmlConfigurationManager.get_instance()
 if configurations is None:
     raise OtmlConfigurationError("OtmlConfigurationManager was not initialized")
 
+
 class FeatureParseError(Exception):
     pass
 
 
-class FeatureTable(UnicodeMixin, object):
+class FeatureTable:
     def __init__(self, feature_table_dict_from_json):
         self.feature_table_dict = dict()
         self.feature_types_dict = dict()
@@ -120,7 +115,7 @@ class FeatureTable(UnicodeMixin, object):
         return symbol in self.feature_table_dict
 
 
-    def __unicode__(self):
+    def __str__(self):
         values_str_io = StringIO()
         print("Feature Table with {0} features and {1} segments:".format(self.get_number_of_features(),
                                                                         len(self.get_alphabet())), end="\n",
@@ -151,9 +146,7 @@ class FeatureTable(UnicodeMixin, object):
             return self.feature_table_dict[segment][feature]
 
 
-
-
-class Segment(UnicodeMixin, object):
+class Segment:
     def __init__(self, symbol, feature_table=None):
         self.symbol = symbol   # JOKER and NULL segments need feature_table=None
         if feature_table:
@@ -208,7 +201,7 @@ class Segment(UnicodeMixin, object):
     def __hash__(self):
         return self.hash
 
-    def __unicode__(self):
+    def __str__(self):
         if hasattr(self, "feature_table"):
             values_str_io = StringIO()
             ordered_feature_vector = self.feature_table.get_ordered_feature_vector(self.symbol)
@@ -230,7 +223,7 @@ JOKER_SEGMENT = Segment("*")
 
 #----------------------
 
-class FeatureType(UnicodeMixin, object):
+class FeatureType:
     def __init__(self, label, values):
         self.label = label
         self.values = values
@@ -238,7 +231,7 @@ class FeatureType(UnicodeMixin, object):
     def get_random_value(self):
         return choice(self.values)
 
-    def __unicode__(self):
+    def __str__(self):
         values_str_io = StringIO()
         for value in self.values:
             print(value, end=", ", file=values_str_io)

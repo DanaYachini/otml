@@ -1,12 +1,7 @@
-#Python2 and Python 3 compatibility:
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import logging
 
 from six import iterkeys
 from random import choice
-
-from unicode_mixin import UnicodeMixin
 from grammar.grammar import GrammarParseError
 from otml_configuration_manager import OtmlConfigurationManager, OtmlConfigurationError
 
@@ -16,7 +11,7 @@ configurations = OtmlConfigurationManager.get_instance()
 if configurations is None:
     raise OtmlConfigurationError("OtmlConfigurationManager was not initialized")
 
-class FeatureBundle(UnicodeMixin, object):
+class FeatureBundle:
     __slots__ = ["feature_dict", "feature_table"]
     def __init__(self, feature_dict, feature_table):
         for feature in feature_dict.keys():
@@ -62,7 +57,7 @@ class FeatureBundle(UnicodeMixin, object):
     def __eq__(self, other):
         return self.feature_dict == other.feature_dict
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.feature_dict)
 
     def __getitem__(self, item):

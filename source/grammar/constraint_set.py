@@ -1,16 +1,9 @@
-#Python2 and Python 3 compatibility:
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from math import ceil, log
 import codecs
 import json
-import re
 import logging
 import pickle
-
 from six import StringIO, PY3
-
-from unicode_mixin import UnicodeMixin
 from random import choice, randrange
 from grammar.constraint import Constraint, get_number_of_constraints
 from grammar.grammar import GrammarParseError
@@ -32,7 +25,8 @@ constraint_set_transducers = dict()
 
 demote_caching_flag = True
 
-class ConstraintSet(UnicodeMixin, object):
+
+class ConstraintSet:
     def __init__(self, constraint_set_list, feature_table):
         self.feature_table = feature_table
         self.constraints = list()
@@ -162,9 +156,8 @@ class ConstraintSet(UnicodeMixin, object):
             constraint_set_transducers[constraint_set_key] = transducer
             return transducer
 
-
     def _make_transducer(self):
-        if len(self.constraints) is 1:                             # if there is only on constraint in the
+        if len(self.constraints) == 1:                             # if there is only on constraint in the
             return pickle.loads(pickle.dumps(self.constraints[0].get_transducer(), -1))  # constraint set there is no need to intersect
         else:
             constraints_transducers = [constraint.get_transducer() for constraint in self.constraints]
@@ -223,7 +216,7 @@ class ConstraintSet(UnicodeMixin, object):
         constraint_set_json = str(constraint_set_list).replace("'", '"') # ' -> "
         return constraint_set_json
 
-    def __unicode__(self):
+    def __str__(self):
         str_io = StringIO()
         print("Constraint Set: ", file=str_io, end="")
         for i, constraint in enumerate(self.constraints):

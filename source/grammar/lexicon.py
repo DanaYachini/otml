@@ -1,20 +1,12 @@
-#Python2 and Python 3 compatibility:
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from random import choice, randint
 import logging
 from math import log, ceil
 import codecs
 from ast import literal_eval
-
-from unicode_mixin import UnicodeMixin
-
-
 from grammar.feature_table import Segment
 from transducer import CostVector, Arc, State, Transducer, NULL_SEGMENT, JOKER_SEGMENT
 from randomization_tools import get_weighted_list
 from otml_configuration_manager import OtmlConfigurationManager, OtmlConfigurationError
-
 
 
 logger = logging.getLogger(__name__)
@@ -25,72 +17,49 @@ if configurations is None:
 
 word_transducers = dict()
 
-class Word(UnicodeMixin, object):
-    __slots__ = ["word_string", "feature_table", "segments"]
-    def __init__(self, word_string, feature_table):
-        """
-        word_string and segment should be in sync at any time
 
-        """
+class Word:
+    __slots__ = ["word_string", "feature_table", "segments"]
+
+    def __init__(self, word_string, feature_table):
+        """word_string and segment should be in sync at any time"""
         self.word_string = word_string
         self.feature_table = feature_table
         self.segments = [Segment(char, self.feature_table) for char in self.word_string]
 
     def change_segment(self):
-        """changing the word_string and therefore the segments composing it
-           and making sure the new segment is not identical to segment being replaced"""
         logging.debug("change_segment")
-        word_string_list = list(self.word_string)  # Making a mutable list from immutable string
-        index_of_change = randint(0, len(self.word_string)-1)
+        word_string_list = list(self.word_string)
+        index_of_change = randint(0, len(self.word_string) - 1)
         old_segment = word_string_list[index_of_change]
 
         segment_options_list = self.feature_table.get_alphabet()
-        segment_options_list.remove(old_segment)  # Making sure that the new segment is not identical to segment being replaced
+        segment_options_list.remove(old_segment)
 
         if not segment_options_list:  # there are no change candidates
             return False
 
         new_segment = choice(segment_options_list)
         word_string_list[index_of_change] = new_segment
-        new_word_string = ''.join(word_string_list)
+        new_word_string = "".join(word_string_list)
         self._set_word_string(new_word_string)
         return True
 
-    @staticmethod
-    def is_appropriate(word_string):
-        # for forbidden_sequence in ["'p", "'t", "'k"]:
-        #     if forbidden_sequence in word_string:
-        #         return False
-        return True
-
-
     def insert_segment(self, segment_to_insert):
         logging.debug("insert_segment")
-        old_word_string = self.word_string
         index_of_insertion = randint(0, len(self.word_string))
         new_word_string = self.word_string[:index_of_insertion] + segment_to_insert + \
                           self.word_string[index_of_insertion:]
 
-        if self.is_appropriate(new_word_string):
-            self._set_word_string(new_word_string)
-            #logger.info("insert_segment: put {} in {} (at position {}) ".format(segment_to_insert, new_word_string,
-            #                                                               index_of_insertion))
-            return True
-        else:
-            return False
-
+        self._set_word_string(new_word_string)
+        return True
 
     def delete_segment(self):
         logging.debug("delete_segment")
-        old_word_string = self.word_string
-        index_of_deletion = randint(0, len(self.word_string)-1)
-        new_word_string = self.word_string[:index_of_deletion] + self.word_string[index_of_deletion+1:]
-        if self.is_appropriate(new_word_string):
-            self._set_word_string(new_word_string)
-           #print("delete segment: {} -> {}".format(old_word_string, new_word_string))
-            return True
-        else:
-            return False
+        index_of_deletion = randint(0, len(self.word_string) - 1)
+        new_word_string = self.word_string[:index_of_deletion] + self.word_string[index_of_deletion + 1:]
+        self._set_word_string(new_word_string)
+        return True
 
     def _set_word_string(self, new_word_string):
         self.word_string = new_word_string
@@ -104,7 +73,6 @@ class Word(UnicodeMixin, object):
             transducer = self._make_transducer()
             word_transducers[word_key] = transducer
             return transducer
-
 
     def _make_transducer(self):
         segments = self.feature_table.get_segments()
@@ -133,7 +101,7 @@ class Word(UnicodeMixin, object):
         global word_transducers
         word_transducers = dict()
 
-    def __unicode__(self):
+    def __str__(self):
         return self.word_string
 
     def __len__(self):
@@ -146,7 +114,7 @@ class Word(UnicodeMixin, object):
         return hash(self.word_string)
 
 
-class Lexicon(UnicodeMixin, object):
+class Lexicon:
 
     def __init__(self, input_words, feature_table):
         """
@@ -160,30 +128,30 @@ class Lexicon(UnicodeMixin, object):
         self.feature_table = feature_table
 
     def make_mutation(self):
-        """
-        rtype: boolean - the mutation success
-        """
         mutation_weights = [(self._insert_segment, configurations["INSERT_SEGMENT_WEIGHT"]),
                             (self._delete_segment, configurations["DELETE_SEGMENT_WEIGHT"]),
                             (self._change_segment, configurations["CHANGE_SEGMENT_WEIGHT"])]
 
         weighted_mutation_function_list = get_weighted_list(mutation_weights)
-        return choice(weighted_mutation_function_list)()
-
+        chosen_mutation_function = choice(weighted_mutation_function_list)
+        is_mutation_success = chosen_mutation_function()
+        return is_mutation_success
 
     def _change_segment(self):
         return choice(self.words).change_segment()
 
     def _insert_segment(self):
         segment_to_insert = self.feature_table.get_random_segment()
-        n = len(self.words)
-        index_of_word_to_change = randint(0, n)
-        if index_of_word_to_change == n:
-            w = Word(segment_to_insert, self.feature_table)  # create a new monosegmental word
+        words_length = len(self.words)
+        index_of_word_to_change = randint(0, words_length)
+        if index_of_word_to_change == words_length:
+            w = Word(segment_to_insert, self.feature_table)  # create a new mono-segmental word
             self.words.append(w)
             return True
         else:
-            return self.words[index_of_word_to_change].insert_segment(segment_to_insert)
+            chosen_word_to_change = self.words[index_of_word_to_change]
+            result = chosen_word_to_change.insert_segment(segment_to_insert)
+            return result
 
     def _delete_segment(self):
         selected_word = choice(self.words)
@@ -222,7 +190,7 @@ class Lexicon(UnicodeMixin, object):
     def _get_number_of_segments(self):
         return sum([len(word) for word in self.words])
 
-    def __unicode__(self):
+    def __str__(self):
         if configurations["LOG_LEXICON_WORDS"]:
             return "Lexicon, number of words: {0}, number of segments: {1}, {2}".format(len(self.words),
                                                                      self._get_number_of_segments(),

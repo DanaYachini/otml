@@ -1,14 +1,7 @@
-#Python2 and Python 3 compatibility:
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import sys
 from random import randint, choice
 import logging
-
 from six import StringIO, with_metaclass
-
-
-from unicode_mixin import UnicodeMixin
 from grammar.feature_bundle import FeatureBundle
 from grammar.grammar import GrammarParseError
 from transducer import CostVector, Arc, State, Transducer
@@ -27,6 +20,7 @@ _all_constraints = list()
 
 constraint_transducers = dict()
 
+
 def get_number_of_constraints():
     return len(_all_constraints)
 
@@ -38,7 +32,7 @@ class ConstraintMetaClass(type):
         return type.__new__(mcs, name, bases, attributes)
 
 
-class Constraint(with_metaclass(ConstraintMetaClass, UnicodeMixin)):
+class Constraint(with_metaclass(ConstraintMetaClass)):
 
     def __init__(self, bundles_list, allow_multiple_bundles, feature_table):
         """ bundle_list can contain either raw dictionaries or full blown FeatureBundle """
@@ -107,7 +101,7 @@ class Constraint(with_metaclass(ConstraintMetaClass, UnicodeMixin)):
             return self.feature_bundles == other.feature_bundles
         return False
 
-    def __unicode__(self):
+    def __str__(self):
         str_io = StringIO()
         print("{0}[".format(self.get_constraint_name()), file=str_io, end="")
         for featureBundle in self.feature_bundles:
@@ -207,6 +201,7 @@ class IdentConstraint(Constraint):
     def get_constraint_name(cls):
         return "Ident"
 
+
 class FaithConstraint(Constraint):
     """
     This constraint has no feature bundle list
@@ -231,6 +226,7 @@ class FaithConstraint(Constraint):
     @classmethod
     def get_constraint_name(cls):
         return "Faith"
+
 
 class PhonotacticConstraint(Constraint):
     def __init__(self, bundles_list, feature_table):

@@ -1,12 +1,6 @@
-#Python2 and Python 3 compatibility:
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import logging
-
 from math import ceil, log
 import pickle
-
-from unicode_mixin import UnicodeMixin
 from otml_configuration_manager import OtmlConfigurationManager, OtmlConfigurationError
 
 
@@ -16,9 +10,7 @@ if configurations is None:
     raise OtmlConfigurationError("OtmlConfigurationManager was not initialized")
 
 
-
-class TraversableGrammarHypothesis(UnicodeMixin, object):
-
+class TraversableGrammarHypothesis:
     def __init__(self, grammar, data):
         self.grammar = grammar
         self.data = data
@@ -27,7 +19,6 @@ class TraversableGrammarHypothesis(UnicodeMixin, object):
         self.data_energy = None
         self.combined_energy = None
 
-    #@timeit
     def get_energy(self):
         data_length = self.get_data_length_given_grammar()
         grammar_length = self.grammar.get_encoding_length()
@@ -37,7 +28,6 @@ class TraversableGrammarHypothesis(UnicodeMixin, object):
         self.data_energy = data_length * data_multiplier
         self.combined_energy = self.grammar_energy + self.data_energy
         return self.combined_energy
-
 
     def get_data_length_given_grammar(self):
         """
@@ -60,7 +50,6 @@ class TraversableGrammarHypothesis(UnicodeMixin, object):
 
         self.data_parse = data_parse_dict
         return total_length
-
 
     def get_recent_data_parse(self):
         result = ""
@@ -113,7 +102,6 @@ class TraversableGrammarHypothesis(UnicodeMixin, object):
                     data_parse_dict[output].add(parse)
         return data_parse_dict
 
-    #@timeit
     def encode_output(self, parse, input_choice_length):
         input, number_of_outputs = parse
         output_choice_length = ceil(log(number_of_outputs, 2))
@@ -124,12 +112,11 @@ class TraversableGrammarHypothesis(UnicodeMixin, object):
         mutation_result = new_hypothesis.grammar.make_mutation()
         return mutation_result, new_hypothesis
 
-    #@timeit
     def get_hypothesis_copy(self):
         grammar_copy = pickle.loads(pickle.dumps(self.grammar, -1))
         return TraversableGrammarHypothesis(grammar_copy, self.data)
 
-    def __unicode__(self):
+    def __str__(self):
         return "Hypothesis with energy: {0}".format(self.get_energy())
 
 
