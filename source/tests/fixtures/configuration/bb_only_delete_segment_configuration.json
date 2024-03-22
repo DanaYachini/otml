@@ -26,7 +26,7 @@
 
     "LEXICON_MUTATION_WEIGHTS": {
     "insert_segment": 0,
-    "delete_segment": 1,
+    "delete_segment": 3,
     "change_segment": 0},
     "CONSTRAINT_SET_MUTATION_WEIGHTS": {
     "insert_constraint": 0,
