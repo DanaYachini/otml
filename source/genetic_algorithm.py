@@ -56,13 +56,13 @@ class GeneticAlgoritm(object):
         return self.population[0]
 
     def make_generation(self):
-        elite = self.get_elite()
+        elite, rest = self.get_elite()
         offsprings = [hypothesis.get_neighbor()[1] if random.random() < self.mutation_rate else hypothesis
-                      for hypothesis in self.population]
-        self.population = sorted(elite + offsprings, key=lambda hypothesis: hypothesis.get_energy())[:self.population_size]
+                      for hypothesis in rest]
+        self.population = sorted(elite + offsprings, key=lambda hypothesis: hypothesis.get_energy())
 
     def get_elite(self):
-        return self.population[:self.elite_size]
+        return self.population[:self.elite_size], self.population[self.elite_size:]
 
     def log_hypothesis_state(self):
         current_time = time.time()

@@ -28,21 +28,21 @@
     "RANDOM_POSITION_FOR_FEATURE_BUNDLE_REMOVAL_IN_PHONOTACTIC": "True",
 
     "LEXICON_MUTATION_WEIGHTS": {
-    "insert_segment": 1,
+    "insert_segment": 0,
     "delete_segment": 1,
     "change_segment": 0},
     "CONSTRAINT_SET_MUTATION_WEIGHTS": {
     "insert_constraint": 0,
     "remove_constraint": 0,
-    "demote_constraint": 1,
+    "demote_constraint": 0,
     "insert_feature_bundle_phonotactic_constraint": 0,
     "remove_feature_bundle_phonotactic_constraint": 0,
     "augment_feature_bundle": 0},
     "CONSTRAINT_INSERTION_WEIGHTS": {
     "Dep": 1,
-    "Max": 1,
-    "Ident": 1,
-    "Phonotactic": 1},
+    "Max": 0,
+    "Ident": 0,
+    "Phonotactic": 0},
 
     "DEBUG_LOGGING_INTERVAL": 50,
 
