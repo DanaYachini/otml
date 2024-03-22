@@ -54,6 +54,10 @@ class TraversableGrammarHypothesis:
     def get_recent_data_parse(self):
         result = ""
         data_parse_with_string_keys = dict()
+
+        if not self.data_parse:
+            self.get_data_length_given_grammar()
+
         for word in self.data_parse:
             data_parse_with_string_keys[str(word)] = self.data_parse[word]
 
