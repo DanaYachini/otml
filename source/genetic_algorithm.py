@@ -48,21 +48,22 @@ class GeneticAlgoritm(object):
     def run(self):
         self.start_time = time.time()
         self.previous_interval_energy = self.population[0].get_energy()
-        for _ in range(self.max_generations):
+        for gen in range(self.max_generations):
             self.make_generation()
             self.generation += 1
+            #if not (gen + 1) % configurations["DEBUG_LOGGING_INTERVAL"]:
             self.log_hypothesis_state()
 
         return self.population[0]
 
     def make_generation(self):
-        elite, rest = self.get_elite()
+        elite = self.get_elite()
         offsprings = [hypothesis.get_neighbor()[1] if random.random() < self.mutation_rate else hypothesis
-                      for hypothesis in rest]
+                      for hypothesis in self.population[:self.population_size - self.elite_size]]
         self.population = sorted(elite + offsprings, key=lambda hypothesis: hypothesis.get_energy())
 
     def get_elite(self):
-        return self.population[:self.elite_size], self.population[self.elite_size:]
+        return self.population[:self.elite_size]
 
     def log_hypothesis_state(self):
         current_time = time.time()
