@@ -9,11 +9,11 @@ source_directory_path = current_file_path.parent
 fixtures_directory_path = Path(source_directory_path, "tests", "fixtures")
 
 
-RUN_NAME = "bb_only_delete_segment_configuration__2024_03_07"
+RUN_NAME = "ga"
 FEATURE_TABLE_FILE_NAME = "a_b_and_cons_feature_table.json"
 CORPUS_FILE_NAME = "bb_corpus.txt"
 CONSTRAINT_SET_FILE_NAME = "bb_target_constraint_set.json"
-CONFIGURATION_FILE_NAME = "bb_only_delete_segment_configuration.json"
+CONFIGURATION_FILE_NAME = "otml_ga_configuration.json"
 
 
 configuration_file_path = str(Path(fixtures_directory_path, "configuration", CONFIGURATION_FILE_NAME))
@@ -28,7 +28,7 @@ from grammar.grammar import Grammar
 from traversable_grammar_hypothesis import TraversableGrammarHypothesis
 from corpus import Corpus
 from simulated_annealing import SimulatedAnnealing
-
+from genetic_algorithm import GeneticAlgoritm
 logging_directory_path = Path(source_directory_path, "logging")
 
 log_file_path = str(Path(logging_directory_path, "ab.txt"))
@@ -61,22 +61,18 @@ corpus = Corpus.load(corpus_file_path)
 constraint_set = ConstraintSet.load(constraint_set_file_path, feature_table)
 lexicon = Lexicon(corpus.get_words(), feature_table)
 grammar = Grammar(feature_table, constraint_set, lexicon)
-#print(grammar.get_encoding_length())
-
-
-
-#print(grammar.get_all_outputs_grammar())
-
-#data = corpus.get_words()
 data = grammar.get_all_outputs_grammar()
-traversable_hypothesis = TraversableGrammarHypothesis(grammar, data)
-
-print(traversable_hypothesis.get_energy())
-
-simulated_annealing = SimulatedAnnealing(traversable_hypothesis)
-simulated_annealing.run()
-
-# 412,494 bits (Grammar = 9,294) + (Data = 403,200)
 
 
-# 407,274 bits (Grammar = 4,074) + (Data = 403,200)
+ga = GeneticAlgoritm(data, grammar)
+ga.run()
+#print(grammar.get_encoding_length())
+#print(grammar.get_all_outputs_grammar())
+#data = corpus.get_words()
+# traversable_hypothesis = TraversableGrammarHypothesis(grammar, data)
+# print(traversable_hypothesis.get_energy())
+
+#simulated_annealing = SimulatedAnnealing(traversable_hypothesis)
+#simulated_annealing.run()
+
+# base energy: 412494

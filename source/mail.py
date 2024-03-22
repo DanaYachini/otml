@@ -11,7 +11,7 @@ class MailManager(with_metaclass(Singleton)):
 
     def __init__(self):
         self.sender = 'otml.results@gmail.com'
-        self.recipient = 'iddoberger@gmail.com'
+        self.recipient = 'DanaYachini@gmail.com'
 
         self.user_name = 'otml.results@gmail.com'
         self.password = 'otmlotml'

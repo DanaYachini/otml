@@ -1,4 +1,4 @@
-#Python2 and Python 3 compatibility:
+# Python2 and Python 3 compatibility:
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import logging
@@ -16,8 +16,6 @@ from grammar.constraint_set import ConstraintSet
 from grammar.constraint import Constraint
 from grammar.lexicon import Word
 from mail import MailManager
-
-
 
 configurations = OtmlConfigurationManager.get_instance()
 if configurations is None:
@@ -56,6 +54,7 @@ class SimulatedAnnealing(object):
         self.previous_interval_time = None
         self.previous_interval_energy = None
         self.mail_manager = MailManager()
+
     def run(self):
         """
         staring simulated annealing
@@ -155,20 +154,17 @@ class SimulatedAnnealing(object):
         #logger.info(debug_tools.get_statistics())
         #logger.info("distinct_words: {}".format(self.current_hypothesis.grammar.lexicon.get_number_of_distinct_words()))
 
-
     def by_interval_time(self, time_from_last_interval):
         number_of_remaining_steps = self.number_of_expected_steps - self.step
         number_of_remaining_intervals = int(number_of_remaining_steps/configurations["DEBUG_LOGGING_INTERVAL"])
         expected_time = number_of_remaining_intervals * time_from_last_interval
         return _pretty_runtime_str(expected_time)
 
-
     def _after_loop(self):
         current_time = time.time()
-        logger.info("*"*10 +" Final Hypothesis " + "*"*10)
+        logger.info("*"*10 + " Final Hypothesis " + "*"*10)
         self._log_hypothesis_state()
         logger.info("simulated annealing runtime was: {}".format(_pretty_runtime_str(current_time - self.start_time)))
-
 
     def _log_hypothesis_state(self):
         logger.info("Grammar with: {}:".format(self.current_hypothesis.grammar.constraint_set))
@@ -183,7 +179,6 @@ class SimulatedAnnealing(object):
             energy_delta = self.current_hypothesis.combined_energy - self.target_energy
             logger.info("Distance from target energy: {:,}".format(energy_delta))
 
-
         if self.target_lexicon_indicator_function:
             lexicon_string_words = [str(word) for word in self.current_hypothesis.grammar.lexicon.get_words()]
             logger.info(self.target_lexicon_indicator_function(lexicon_string_words))
@@ -195,7 +190,6 @@ class SimulatedAnnealing(object):
             desired_outputs_set = set(self.sample_target_outputs)
             target_grammar_parse_indicator = outputs_set == desired_outputs_set
             logger.info("Desired grammar: {}".format(target_grammar_parse_indicator))
-
 
     @staticmethod
     def _get_memory_usage():
