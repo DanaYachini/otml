@@ -35,24 +35,27 @@ class GeneticAlgoritm(object):
         self.generation = 0
         self.start_time = None
         self.previous_interval_energy = None
+        self.population = None
 
         self.max_generations = configurations["MAX_GENERATION"]
         self.population_size = configurations["POPULATION_SIZE"]
         self.elite_size = configurations["ELITE_SIZE"]
         self.mutation_rate = configurations["MUTATION_RATE"]
 
-        start_hypothesis = TraversableGrammarHypothesis(grammar, data)
+    def init_population(self):
+        start_hypothesis = TraversableGrammarHypothesis(self.input_grammar, self.input_data)
         population = [start_hypothesis.get_neighbor()[1] for _ in range(self.population_size - 1)] + [start_hypothesis]
         self.population = sorted(population, key=lambda hypothesis: hypothesis.get_energy())
 
     def run(self):
+        self.init_population()
         self.start_time = time.time()
         self.previous_interval_energy = self.population[0].get_energy()
         for gen in range(self.max_generations):
             self.make_generation()
             self.generation += 1
-            #if not (gen + 1) % configurations["DEBUG_LOGGING_INTERVAL"]:
-            self.log_hypothesis_state()
+            if not (gen + 1) % configurations["DEBUG_LOGGING_INTERVAL"]:
+                self.log_hypothesis_state()
 
         return self.population[0]
 
