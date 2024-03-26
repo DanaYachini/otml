@@ -45,7 +45,7 @@ class GeneticAlgoritm(object):
     def init_population(self):
         start_hypothesis = TraversableGrammarHypothesis(self.input_grammar, self.input_data)
         population = [start_hypothesis.get_neighbor()[1] for _ in range(self.population_size - 1)] + [start_hypothesis]
-        self.population = sorted(population, key=lambda hypothesis: hypothesis.get_energy())
+        self.population = population
 
     def run(self):
         self.init_population()
@@ -57,16 +57,24 @@ class GeneticAlgoritm(object):
             if not (gen + 1) % configurations["DEBUG_LOGGING_INTERVAL"]:
                 self.log_hypothesis_state()
 
-        return self.population[0]
+        return min(self.population, key=lambda hypothesis: hypothesis.get_energy())
 
     def make_generation(self):
-        elite = self.get_elite()
+        elite, rest = self.get_elite()
         offsprings = [hypothesis.get_neighbor()[1] if random.random() < self.mutation_rate else hypothesis
-                      for hypothesis in self.population[:self.population_size - self.elite_size]]
-        self.population = sorted(elite + offsprings, key=lambda hypothesis: hypothesis.get_energy())
+                      for hypothesis in rest]
+        next_gen = self.tournenment_selection(offsprings)
+        self.population = elite + next_gen
 
     def get_elite(self):
-        return self.population[:self.elite_size]
+        sort_pop = sorted(self.population, key=lambda hypothesis: hypothesis.get_energy())
+        return sort_pop[:self.elite_size], sort_pop[self.elite_size:]
+
+    def tournenment_selection(self, offsprings):
+        next_gen = []
+        for _ in range(self.population_size):
+            next_gen.append(min(random.sample(offsprings, 2), key=lambda hypothesis: hypothesis.get_energy()))
+        return next_gen
 
     def log_hypothesis_state(self):
         current_time = time.time()
