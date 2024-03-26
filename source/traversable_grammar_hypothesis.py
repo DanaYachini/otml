@@ -20,6 +20,9 @@ class TraversableGrammarHypothesis:
         self.combined_energy = None
 
     def get_energy(self):
+        if self.combined_energy:
+            return self.combined_energy
+
         data_length = self.get_data_length_given_grammar()
         grammar_length = self.grammar.get_encoding_length()
         data_multiplier = configurations["DATA_ENCODING_LENGTH_MULTIPLIER"]
@@ -56,7 +59,7 @@ class TraversableGrammarHypothesis:
         data_parse_with_string_keys = dict()
 
         if not self.data_parse:
-            self.get_data_length_given_grammar()
+            self.data_parse = {}
 
         for word in self.data_parse:
             data_parse_with_string_keys[str(word)] = self.data_parse[word]
