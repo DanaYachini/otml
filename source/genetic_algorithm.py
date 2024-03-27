@@ -60,26 +60,29 @@ class GeneticAlgoritm(object):
         return min(self.population, key=lambda hypothesis: hypothesis.get_energy())
 
     def make_generation(self):
-        elite, rest = self.get_elite()
+        elite = self.get_elite()
+        next_gen = self.tournenment_selection()
         offsprings = [hypothesis.get_neighbor()[1] if random.random() < self.mutation_rate else hypothesis
-                      for hypothesis in rest]
-        next_gen = self.tournenment_selection(offsprings)
-        self.population = elite + next_gen
+                      for hypothesis in next_gen]
+
+        self.population = elite + offsprings
 
     def get_elite(self):
         sort_pop = sorted(self.population, key=lambda hypothesis: hypothesis.get_energy())
-        return sort_pop[:self.elite_size], sort_pop[self.elite_size:]
+        return sort_pop[:self.elite_size]
 
-    def tournenment_selection(self, offsprings):
+    def tournenment_selection(self):
         next_gen = []
-        for _ in range(self.population_size):
-            next_gen.append(min(random.sample(offsprings, 2), key=lambda hypothesis: hypothesis.get_energy()))
+        for _ in range(self.population_size - self.elite_size):
+            winner = min(random.sample(self.population, configurations["TOURNAMENT_SIZE"]),
+                         key=lambda hypothesis: hypothesis.get_energy())
+            next_gen.append(winner)
         return next_gen
 
     def log_hypothesis_state(self):
         current_time = time.time()
 
-        logger.info("\n" + "-" * 125)
+        logger.info("\n" + "-" * 125 + "\n")
         percentage_completed = 100 * float(self.generation) / float(self.max_generations)
         logger.info("Generation {0:,} of {1:,} ({2:.2f}%)".format(self.generation, self.max_generations,
                                                                   percentage_completed))

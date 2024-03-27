@@ -80,6 +80,8 @@ class TraversableGrammarHypothesis:
         return result
 
     def get_recent_energy_signature(self):
+        if not (self.grammar_energy and self.combined_energy and self.data_energy):
+            self.get_energy()
         return "Energy: {:,} bits (Grammar = {:,}) + (Data = {:,})".format(self.combined_energy, self.grammar_energy,
                                                                            self.data_energy)
 

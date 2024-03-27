@@ -63,9 +63,8 @@ lexicon = Lexicon(corpus.get_words(), feature_table)
 grammar = Grammar(feature_table, constraint_set, lexicon)
 data = grammar.get_all_outputs_grammar()
 
-
 ga = GeneticAlgoritm(data, grammar)
-ga.run()
+res = ga.run()
 #print(grammar.get_encoding_length())
 #print(grammar.get_all_outputs_grammar())
 #data = corpus.get_words()
