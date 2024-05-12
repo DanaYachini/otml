@@ -2,19 +2,11 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 import logging
 import os
-from math import exp
-from random import choice
 import random
 from datetime import timedelta
 import time
 import re
 from otml_configuration_manager import OtmlConfigurationManager, OtmlConfigurationError
-import subprocess
-from grammar.grammar import Grammar
-from grammar.constraint_set import ConstraintSet
-from grammar.constraint import Constraint
-from grammar.lexicon import Word
-from mail import MailManager
 from traversable_grammar_hypothesis import TraversableGrammarHypothesis
 
 configurations = OtmlConfigurationManager.get_instance()
@@ -57,6 +49,10 @@ class GeneticAlgoritm(object):
             if not (gen + 1) % configurations["DEBUG_LOGGING_INTERVAL"]:
                 self.log_hypothesis_state()
 
+        current_time = time.time()
+        logger.info("*" * 10 + " Final Hypothesis " + "*" * 10)
+        self.log_hypothesis_state()
+        logger.info("genetic algorithm runtime was: {}".format(_pretty_runtime_str(current_time - self.start_time)))
         return min(self.population, key=lambda hypothesis: hypothesis.get_energy())
 
     def make_generation(self):
@@ -92,16 +88,16 @@ class GeneticAlgoritm(object):
         crude_expected_time = elapsed_time * (100 / percentage_completed)
         logger.info("Expected simulation time: {} ".format(_pretty_runtime_str(crude_expected_time)))
 
-        for hypo in self.population:
-            logger.info("- " * 40)
-            logger.info("Grammer with: {}:".format(hypo.grammar.constraint_set))
-            if configurations["RESTRICTION_ON_ALPHABET"]:
-                restricted_alphabet = hypo.grammar.lexicon.get_distinct_segments()
-                restricted_alphabet_list = [segment.symbol for segment in restricted_alphabet]
-                logger.info("Alphabet: {}".format(restricted_alphabet_list))
-            logger.info("{}".format(hypo.grammar.lexicon))
-            logger.info("Parse: {}".format(hypo.get_recent_data_parse()))
-            logger.info(hypo.get_recent_energy_signature())
+        hypo = min(self.population, key=lambda hypothesis: hypothesis.get_energy())
+        logger.info("- " * 40)
+        logger.info("Grammer with: {}:".format(hypo.grammar.constraint_set))
+        if configurations["RESTRICTION_ON_ALPHABET"]:
+            restricted_alphabet = hypo.grammar.lexicon.get_distinct_segments()
+            restricted_alphabet_list = [segment.symbol for segment in restricted_alphabet]
+            logger.info("Alphabet: {}".format(restricted_alphabet_list))
+        logger.info("{}".format(hypo.grammar.lexicon))
+        logger.info("Parse: {}".format(hypo.get_recent_data_parse()))
+        logger.info(hypo.get_recent_energy_signature())
 
 def _pretty_runtime_str(run_time_in_seconds):
     time_delta = timedelta(seconds=run_time_in_seconds)

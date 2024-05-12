@@ -11,8 +11,8 @@ fixtures_directory_path = Path(source_directory_path, "tests", "fixtures")
 
 RUN_NAME = "ga"
 FEATURE_TABLE_FILE_NAME = "a_b_and_cons_feature_table.json"
-CORPUS_FILE_NAME = "bb_corpus.txt"
-CONSTRAINT_SET_FILE_NAME = "bb_target_constraint_set.json"
+CORPUS_FILE_NAME = "bb_for_paper_corpus.txt"
+CONSTRAINT_SET_FILE_NAME = "bb_constraints.json"
 CONFIGURATION_FILE_NAME = "otml_ga_configuration.json"
 
 
@@ -64,14 +64,13 @@ grammar = Grammar(feature_table, constraint_set, lexicon)
 data = grammar.get_all_outputs_grammar()
 
 ga = GeneticAlgoritm(data, grammar)
-res = ga.run()
-#print(grammar.get_encoding_length())
-#print(grammar.get_all_outputs_grammar())
-#data = corpus.get_words()
-# traversable_hypothesis = TraversableGrammarHypothesis(grammar, data)
+res_ga = ga.run()
+
+traversable_hypothesis = TraversableGrammarHypothesis(grammar, data)
 # print(traversable_hypothesis.get_energy())
 
-#simulated_annealing = SimulatedAnnealing(traversable_hypothesis)
-#simulated_annealing.run()
-
-# base energy: 412494
+simulated_annealing = SimulatedAnnealing(traversable_hypothesis)
+sa_res = simulated_annealing.run()[1]
+print("BASE:", traversable_hypothesis.get_energy())
+print("GA: ", res_ga.get_energy())
+print("SA: ", sa_res.get_energy())
